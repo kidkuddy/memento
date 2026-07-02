@@ -59,7 +59,7 @@ cat > ~/Library/LaunchAgents/com.user.memento.sync.plist <<'EOF'
 <plist version="1.0"><dict>
   <key>Label</key><string>com.user.memento.sync</string>
   <key>ProgramArguments</key><array>
-    <string>/usr/local/bin/memento</string><string>--json</string><string>sync</string>
+    <string>/opt/homebrew/bin/memento</string><string>--json</string><string>sync</string>
   </array>
   <key>StartInterval</key><integer>1800</integer>
   <key>StandardOutPath</key><string>/tmp/memento-sync.log</string>
