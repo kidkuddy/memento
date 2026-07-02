@@ -1,0 +1,3 @@
+/memento
+.memento-tmp-*
+.env
