@@ -58,6 +58,13 @@ same harness style as `memo/test.sh`.
 | DBE-07 | hand-corrupt db.sql (invalid SQL), then any db op | exit 6 "failed to load"; recovery documented: `git checkout -- store/<ns>/db.sql` |
 | DBE-08 | kill -9 the process mid-exec (loop until hit) | db.sql is always either old or new version, never partial (atomic temp+rename) |
 
+### 1.4c db — SQL from stdin
+
+| id | scenario | expected |
+|---|---|---|
+| DBS-01 | `db exec <ns> -` / `db query <ns> -` with SQL piped on stdin | runs the piped SQL; same result as passing it as an argument |
+| DBS-02 | `db exec <ns> -` with empty stdin | exit 2 `BAD_ARG` (empty SQL), no commit |
+
 ### 1.5 fs
 
 | id | scenario | expected |

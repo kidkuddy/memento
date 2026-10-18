@@ -68,6 +68,8 @@ Undo a delete:  git -C <store> checkout <tag> -- <ns>`,
                                Commits as 'data(<ns>): exec' or your -m.
   db schema <ns>               all DDL (tables, indexes, triggers, views)
 
+  <sql> of "-" reads the SQL from stdin (keeps it out of argv / ps).
+
 Migrations (schema changes should go through these, not raw exec DDL):
   db migrate new <ns> <slug>   scaffold migrations/NNNN_<slug>.sql
   db migrate up <ns>           apply pending in order, one commit per file;
@@ -78,7 +80,8 @@ Migrations (schema changes should go through these, not raw exec DDL):
 Examples:
   memento db exec tasks "INSERT INTO tasks(title) VALUES ('ship it');" -m "data(tasks): add task"
   memento db query tasks "SELECT * FROM tasks WHERE done=0;"
-  memento --json db query tasks "SELECT count(*) c FROM tasks;"`,
+  memento --json db query tasks "SELECT count(*) c FROM tasks;"
+  echo "UPDATE tasks SET done=1 WHERE id=3;" | memento db exec tasks -`,
 
 	"fs": `memento fs <subcommand>       (paths jailed under <ns>/files/)
 

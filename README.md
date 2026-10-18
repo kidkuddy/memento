@@ -24,6 +24,7 @@ memento ns create tasks -d "personal + work tasks"
 memento db exec tasks "CREATE TABLE tasks(id INTEGER PRIMARY KEY, title TEXT, done INT DEFAULT 0);"
 memento db exec tasks "INSERT INTO tasks(title) VALUES ('ship memento');"
 memento db query tasks "SELECT * FROM tasks WHERE done=0;"
+echo "UPDATE tasks SET done=1 WHERE id=1;" | memento db exec tasks -   # "-" = SQL from stdin
 memento fs write tasks notes/idea.md "# rough idea"
 memento fs grep tasks "idea"
 memento context tasks          # one-call orientation blob for agents

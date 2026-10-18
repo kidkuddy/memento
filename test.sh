@@ -63,6 +63,14 @@ check "DBE-03 commit touches only db.sql" '[ "$NCOMMIT" = "1" ] && git -C "$A" s
 check "DBE-03 author is memento" 'git -C "$A" log -1 --format=%ae | grep -q memento@localhost'
 check "DBE dump loads under system sqlite3" 'sqlite3 :memory: ".read $A/tasks/db.sql" "SELECT count(*) FROM tasks;" | grep -q 2'
 
+echo "== DBS: SQL from stdin =="
+echo "INSERT INTO tasks(title) VALUES ('from-stdin');" | "$BIN" db exec tasks - >/dev/null; RC=$?
+GOT=$(echo "SELECT count(*) c FROM tasks WHERE title='from-stdin';" | $M db query tasks - | jget "d['data'][0]['c']")
+check "DBS-01 exec/query read SQL from stdin with -" '[ '"$RC"' -eq 0 ] && [ "$GOT" = "1" ]'
+"$BIN" db exec tasks - </dev/null >/dev/null 2>&1; RC=$?
+check "DBS-02 empty stdin -> exit 2" '[ '"$RC"' -eq 2 ]'
+"$BIN" db exec tasks "DELETE FROM tasks WHERE title='from-stdin';" >/dev/null
+
 echo "== DBQ: read-only query =="
 "$BIN" db query tasks "UPDATE tasks SET done=1" >/dev/null 2>&1; RC=$?
 DONE=$($M db query tasks "SELECT count(*) c FROM tasks WHERE done=1" | jget "d['data'][0]['c']")

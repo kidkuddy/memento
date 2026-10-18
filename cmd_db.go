@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"encoding/hex"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -52,9 +53,9 @@ func tableNames(db *sql.DB) []string {
 
 func dbQuery(args []string) {
 	if len(args) != 2 {
-		die("BAD_ARG", "usage: db query <ns> <sql>")
+		die("BAD_ARG", "usage: db query <ns> <sql|->")
 	}
-	name, sqlText := args[0], args[1]
+	name, sqlText := args[0], sqlArg(args[1])
 	if strings.TrimSpace(sqlText) == "" {
 		die("BAD_ARG", "empty SQL")
 	}
@@ -136,6 +137,19 @@ func firstToken(s string) string {
 	return f[0]
 }
 
+// sqlArg reads the SQL from stdin when the argument is "-", so callers can keep
+// large or sensitive SQL out of argv (visible to ps / matched by pkill -f).
+func sqlArg(a string) string {
+	if a != "-" {
+		return a
+	}
+	b, err := io.ReadAll(os.Stdin)
+	if err != nil {
+		die("BAD_ARG", "cannot read SQL from stdin: %v", err)
+	}
+	return string(b)
+}
+
 // --- exec ---------------------------------------------------------------------
 
 func dbExec(args []string) {
@@ -153,9 +167,9 @@ func dbExec(args []string) {
 		pos = append(pos, args[i])
 	}
 	if len(pos) != 2 {
-		die("BAD_ARG", "usage: db exec <ns> <sql> [-m msg]")
+		die("BAD_ARG", "usage: db exec <ns> <sql|-> [-m msg]")
 	}
-	name, sqlText = pos[0], pos[1]
+	name, sqlText = pos[0], sqlArg(pos[1])
 	if strings.TrimSpace(sqlText) == "" {
 		die("BAD_ARG", "empty SQL")
 	}
