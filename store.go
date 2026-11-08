@@ -155,6 +155,11 @@ func atomicWrite(path string, data []byte) {
 		os.Remove(tmpName)
 		die("FS_ERROR", "cannot write temp file: %v", err)
 	}
+	if err := tmp.Sync(); err != nil {
+		tmp.Close()
+		os.Remove(tmpName)
+		die("FS_ERROR", "cannot sync temp file: %v", err)
+	}
 	if err := tmp.Close(); err != nil {
 		os.Remove(tmpName)
 		die("FS_ERROR", "cannot close temp file: %v", err)

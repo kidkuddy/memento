@@ -151,9 +151,10 @@ func fsCat(args []string) {
 		if utf8.Valid(b) {
 			emit(map[string]any{"content": string(b), "encoding": "utf8"},
 				map[string]any{"bytes": len(b)}, "")
+		} else {
+			emit(map[string]any{"content": base64.StdEncoding.EncodeToString(b), "encoding": "base64"},
+				map[string]any{"bytes": len(b)}, "")
 		}
-		emit(map[string]any{"content": base64.StdEncoding.EncodeToString(b), "encoding": "base64"},
-			map[string]any{"bytes": len(b)}, "")
 	}
 	// human mode: raw bytes to stdout (binary-safe, pipe-friendly)
 	os.Stdout.Write(b)

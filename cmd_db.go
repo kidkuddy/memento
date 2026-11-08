@@ -77,6 +77,10 @@ func dbQuery(args []string) {
 	if up == "PRAGMA" {
 		die("SQL_ERROR", "PRAGMA is not available through db query — use db schema for introspection")
 	}
+	// Defense-in-depth: allowlist SELECT only, independent of PRAGMA query_only.
+	if up != "SELECT" {
+		die("SQL_ERROR", "db query allows SELECT-only statements: %s rejected", up)
+	}
 	rows, err := db.Query(sqlText)
 	if err != nil {
 		die("SQL_ERROR", "%v", err)

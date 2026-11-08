@@ -86,7 +86,7 @@ Examples:
 	"fs": `memento fs <subcommand>       (paths jailed under <ns>/files/)
 
   fs write <ns> <path> [content] [-m msg]   stdin when no content (binary ok)
-  fs cat <ns> <path>                        raw bytes; --json wraps utf8/base64
+  fs cat <ns> <path>                        raw bytes; --json returns utf8 for valid text, base64 for binary
   fs ls <ns> [path]
   fs rm <ns> <path>                         refuses the files/ root
   fs mv <ns> <src> <dst> [--force]          refuses existing target without --force

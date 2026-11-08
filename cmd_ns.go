@@ -171,9 +171,9 @@ func nsDelete(args []string) {
 		die("BAD_ARG", "ns delete is destructive — re-run with --force "+
 			"(a pre-delete tag will be created for undo)")
 	}
+	git(store, "rm", "-r", "-q", "--", name)
 	tag := fmt.Sprintf("pre-delete-%s-%s", name, time.Now().UTC().Format("20060102-150405"))
 	git(store, "tag", tag)
-	git(store, "rm", "-r", "-q", "--", name)
 	dataCommit(store, fmt.Sprintf("data(%s): delete namespace (undo tag: %s)", name, tag))
 	emit(map[string]any{"deleted": name, "undo_tag": tag}, nil,
 		fmt.Sprintf("deleted %s (undo: git checkout %s -- %s)", name, tag, name))
